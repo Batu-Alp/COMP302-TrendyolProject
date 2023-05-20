@@ -52,8 +52,21 @@ const ProductScreen = {
     return `
     <div class="content">
       <div class="back-to-result">
-        <a href="/#/">Back to result </a>
+      <!--
+      <form action="/#/">
+      <button class="back-button">
+      <i class="fa fa-arrow-left"></i>
+      Back to shopping
+       </button>
+      </form>  
+      -->
+      <a href="/#/" >
+      <i class="fa fa-arrow-left"></i>
+      Back to shopping 
+      </a>
+
       </div>
+
       <div class="details">
         <div class="details-image">
           <img src="${product.image}" alt="${product.name}" />
@@ -80,6 +93,7 @@ const ProductScreen = {
             </li>
           </ul>
         </div>
+        
         <div class="details-action">
             <ul>
               <li>
@@ -95,8 +109,9 @@ const ProductScreen = {
               </li>
               <li>
                   <!--değişiklik -->
-                  <button id="add-button" class="fw primary">Add to Cart </li>
-                  <button id="add-wishlist" class="fw primary">Add to Wishlist </div>
+                  <button id="add-button" class="fw primary">Add to Cart </button>
+                  <button id="add-wishlist" class="fw primary">Add to Wishlist </button>
+                  </li>
 
 
             </ul>

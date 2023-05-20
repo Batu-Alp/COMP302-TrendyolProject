@@ -26,6 +26,7 @@ const routes = {
   '/cart/:id': CartScreen,
   '/cart': CartScreen,
   '/wishlist': Wishlist,
+  '/wishlist/:id': Wishlist,
   '/signin': SigninScreen,
   '/register': RegisterScreen,
   '/profile': ProfileScreen,

@@ -19,12 +19,17 @@ const Header = {
   </form>        
   </div>
   <div>
+  <i class="glyphicon glyphicon-user"></i>
   ${
     name
       ? `<a href="/#/profile">${name}</a>`
-      : `<a href="/#/signin">Sign-In</a>`
-  }    
+      : `
+          <a href="/#/signin">Sign-In</a>`
+  }  
+    <i class="fa fa-shopping-cart" style="font-size:18px"></i>
     <a href="/#/cart">Cart</a>
+    
+    <i class="fa fa-heart" style="font-size:18px"></i>
     <a href="/#/wishlist">Wishlist</a>
 
     ${isAdmin ? `<a href="/#/dashboard">Dashboard</a>` : ''}

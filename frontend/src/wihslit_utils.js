@@ -50,12 +50,11 @@ export const showMessage = (message, callback) => {
     });
 };
 export const redirectUser = () => {
-  console.log(getCartItems().length);
-  if (getCartItems().length !== 0 || getWishlistItems().length !== 0) {
+  console.log(getWishlistItems().length);
+  if (getWishlistItems().length !== 0) {
     document.location.hash = '/shipping';
   } 
-  // Wishlist to shipping
-
+ 
   else {
     document.location.hash = '/';
   }

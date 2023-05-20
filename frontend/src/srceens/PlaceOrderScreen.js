@@ -3,6 +3,7 @@ import {
   getShipping,
   getPayment,
   cleanCart,
+  getWishlistItems
 } from '../localStorage';
 import CheckoutSteps from '../components/CheckoutSteps';
 import { showLoading, hideLoading, showMessage } from '../utils';
@@ -12,6 +13,10 @@ const convertCartToOrder = () => {
   const orderItems = getCartItems();
   if (orderItems.length === 0) {
     document.location.hash = '/cart';
+  }
+  const wishlistItems = getWishlistItems();
+  if (wishlistItems.length === 0) {
+    document.location.hash = '/wishlist';
   }
   const shipping = getShipping();
   if (!shipping.address) {
