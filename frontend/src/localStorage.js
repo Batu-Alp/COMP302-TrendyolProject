@@ -9,13 +9,13 @@ export const setCartItems = (cartItems) => {
 };
 
 export const getWishlistItems = () => {
-  const cartItems = localStorage.getItem('wishlitItems')
+  const wishlistItems = localStorage.getItem('wishlistItems')
     ? JSON.parse(localStorage.getItem('wishlistItems'))
     : [];
-  return cartItems;
+  return wishlistItems;
 };
-export const setWishlistItems = (cartItems) => {
-  localStorage.setItem('wishlistItems', JSON.stringify(cartItems));
+export const setWishlistItems = (wishlistItems) => {
+  localStorage.setItem('wishlistItems', JSON.stringify(wishlistItems));
 };
 
 export const setUserInfo = ({
