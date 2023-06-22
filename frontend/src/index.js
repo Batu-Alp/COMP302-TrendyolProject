@@ -16,6 +16,9 @@ import DashboardScreen from './srceens/DashboardScreen';
 import ProductListScreen from './srceens/ProductListScreen';
 import ProductEditScreen from './srceens/ProductEditScreen';
 import OrderListScreen from './srceens/OrderListScreen';
+import CustomerMessages from './srceens/CustomerMessages';
+import CustomerSupport from './srceens/CustomerSupport';
+
 import Aside from './components/Aside';
 
 const routes = {
@@ -36,6 +39,9 @@ const routes = {
   '/dashboard': DashboardScreen,
   '/productlist': ProductListScreen,
   '/orderlist': OrderListScreen,
+  '/customer-messages' : CustomerMessages,
+  '/customer-support' : CustomerSupport,
+
 };
 const router = async () => {
   showLoading();

@@ -31,8 +31,14 @@ const Aside = {
           <span><i class="fa fa-chevron-right"></i></span>
         </a>
       </li>
+      <li>
+      <a href="/#/?q=SmallKitchenAppliances"
+        >Small Kitchen Appliances
+        <span><i class="fa fa-chevron-right"></i></span>
+      </a>
+    </li>
     </ul>
-  </div>`;
+  </div>`;  	
   },
   after_render: async () => {
     document.getElementById('aside-container').classList.remove('open');

@@ -13,6 +13,8 @@ const RegisterScreen = {
           name: document.getElementById('name').value,
           email: document.getElementById('email').value,
           password: document.getElementById('password').value,
+          cash: document.getElementById('cash').value,
+
         });
         hideLoading();
         if (data.error) {
@@ -50,13 +52,17 @@ const RegisterScreen = {
             <label for="repassword">Re-Enter Password</label>
             <input type="password" name="repassword" id="repassword" />
           </li>
+           <li>
+            <label for="cash">Cash</label>
+            <input type="cash" name="cash" id="cash" />
+          </li>
           <li>
             <button type="submit" class="primary">Register</button>
           </li>
           <li>
             <div>
               Already have an account?
-              <a href="/#/signin">Sign-In </a>
+              <a href="/#/signin">Log-in </a>
             </div>
           </li>
         </ul>

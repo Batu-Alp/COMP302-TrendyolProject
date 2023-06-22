@@ -5,40 +5,71 @@ import { parseRequestUrl } from '../utils';
 const HomeScreen = {
   render: async () => {
     const { value } = parseRequestUrl();
-    const products = await getProducts({ searchKeyword: value });
+    const products = await getProducts({ });
 
     if (products.error) {
       return `<div class="error">${products.error}</div>`;
     }
 
-    const categories = ['Tshirt', 'Phone', 'Electronic']; // Kategori seçenekleri
-    const selectedCategory = value || ''; // Seçilen kategori değerini alın veya boş bir değer kullanın
+    const categories = ['T-Shirt', 'Phone', 'Electronic', 'SmallKitchenAppliances'];
+    const selectedCategory = value || ""; // Seçilen kategori değerini alın veya boş bir değer kullanın
+    const searchedName = value || ""; // Seçilen kategori değerini alın veya boş bir değer kullanın
 
     const categoryOptions = categories
       .map(
         (category) => `
-          <option value="${category}">${category}</option>
+          <option value="${category}" ${category === selectedCategory ? 'selected' : ''}>${category}</option>
         `
       )
       .join('');
-    console.log("selectedCategory : " , selectedCategory);
 
-    //const categoryname = document.getElementById('category').value;
+    // Seçilen kategoriye göre filtreleme yapın
+    /*
     const filteredProducts = selectedCategory
-    ? products.filter((product) => {
-        console.log("p cat : ", product.category);
-        return product.category.toLowerCase() === selectedCategory.toLowerCase();
-      })
-    : products;
-  
+      ? products.filter((product) => product.category === selectedCategory)
+      : products;
+      */
+
     
+      const filteredProducts = selectedCategory
+      ? products.filter((product) => {
+        console.log("Product : ", product); // Konsola kategori değerini yazdırır
+        console.log(product.category); // Konsola kategori değerini yazdırır
+          return product.category.toLowerCase() === selectedCategory.toLowerCase();
+        })
+      : products;
+        /*
+      const searchedProducts = searchedName
+      ? products.filter((product) => {
+        //console.log("Product : ", product); // Konsola kategori değerini yazdırır
+        console.log("product name : ", searchedName); // Konsola kategori değerini yazdırır
+          return product.name.toLowerCase() === searchedName.toLowerCase();
+        })
+      : products;
+      */
+     /*
+      const searched_name = document.getElementById('q').value;
 
-    //console.log(categoryname);
+      const searchedProducts = searched_name
+      ? products.filter((product) => {
+        //console.log("Product : ", product); // Konsola kategori değerini yazdırır
+        //console.log("product.name :",product.name); // Konsola kategori değerini yazdırır
+        console.log("product.value :",searched_name); // Konsola kategori değerini yazdırır
+  
+          return product.name.toLowerCase() === searched_name.toLowerCase();
+        })     : products;
+    
+        console.log("products : ", searchedProducts);
+        */
 
+
+    console.log("selectedCategory : ", selectedCategory);
 
     return `
+
+    <br>
       <div class="category-homescreen">
-        <select id="category" onchange="window.location.href = '/#/?q=' + this.value;">
+        <select class = "option-category" id="category" onchange="window.location.href = '/#/?q=' + this.value;">
           <option value="">All Categories</option>
           ${categoryOptions}
         </select>
@@ -54,7 +85,7 @@ const HomeScreen = {
                     <img src="${product.image}" alt="${product.name}" />
                   </a>
                   <div class="product-name">
-                    <a href="/#/product/1">${product.name}</a>
+                    <a href="/#/product/${product._id}">${product.name}</a>
                   </div>
                   <div class="product-rating">
                     ${Rating.render({
@@ -76,6 +107,37 @@ const HomeScreen = {
       </ul>
     `;
   },
+  /*
+  after_render: async () => {
+
+    const products = await getProducts({ });
+    //const searched_name = document.getElementById('q').value;
+
+    document
+      .getElementById('search-form')
+      .addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const searchKeyword = document.getElementById('q').value;
+        const filteredProducts = searchKeyword
+        ? products.filter((product) => {
+          console.log("product.value :",searchKeyword); // Konsola kategori değerini yazdırır
+
+            return product.name.toLowerCase() === searchKeyword.toLowerCase();
+          })
+        : products;
+
+          console.log("Product : ", filteredProducts); // Konsola kategori değerini yazdırır
+
+      });
+
+
+
+    
+
+   
+  },*/
+
+
 };
 
 export default HomeScreen;

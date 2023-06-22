@@ -25,6 +25,7 @@ export const setUserInfo = ({
   password = '',
   token = '',
   isAdmin = false,
+  isSeller = false,
 }) => {
   localStorage.setItem(
     'userInfo',
@@ -35,6 +36,8 @@ export const setUserInfo = ({
       password,
       token,
       isAdmin,
+      isSeller,
+
     })
   );
 };

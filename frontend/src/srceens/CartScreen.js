@@ -1,9 +1,16 @@
 /* eslint-disable no-use-before-define */
-import { parseRequestUrl, rerender } from '../utils';
-import { getProduct } from '../api';
-import { getCartItems, setCartItems } from '../localStorage';
+import {
+  parseRequestUrl,
+  showLoading,
+  hideLoading,
+  showMessage,
+  rerender,
+} from '../utils';
+//import { parseRequestUrl, rerender } from '../utils';
+import { getProduct, updateProduct, update, getUser } from '../api';
+import { getCartItems, setCartItems,getUserInfo } from '../localStorage';
 
-const addToCart = (item, forceUpdate = false) => {
+export const addToCart = (item, forceUpdate = false) => {
   let cartItems = getCartItems();
   const existItem = cartItems.find((x) => x.product === item.product);
   if (existItem) {
@@ -20,7 +27,7 @@ const addToCart = (item, forceUpdate = false) => {
     rerender(CartScreen);
   }
 };
-const removeFromCart = (id) => {
+export const removeFromCart = (id) => {
   setCartItems(getCartItems().filter((x) => x.product !== id));
   if (id === parseRequestUrl().id) {
     document.location.hash = '/cart';
@@ -29,8 +36,12 @@ const removeFromCart = (id) => {
   }
 };
 
+
+
 const CartScreen = {
   after_render: () => {
+    const request = parseRequestUrl();
+
     const qtySelects = document.getElementsByClassName('qty-select');
     Array.from(qtySelects).forEach((qtySelect) => {
       qtySelect.addEventListener('change', (e) => {
@@ -40,16 +51,129 @@ const CartScreen = {
     });
     const deleteButtons = document.getElementsByClassName('delete-button');
     Array.from(deleteButtons).forEach((deleteButton) => {
-      deleteButton.addEventListener('click', () => {
-        removeFromCart(deleteButton.id);
+      deleteButton.addEventListener('click', async (e) => {
+      
+      console.log("deleteButton :", deleteButton.id);
+      //const item = getProduct().find((x) => x.product === deleteButton.id);
+      const product = await getProduct(deleteButton.id);
+
+      console.log("item:", product);
+      console.log("old stock :", product.countInStock);
+
+      product.countInStock += 1;
+
+      const data = await updateProduct({
+        _id: request.id,
+        name: product.name,
+        price: product.price,
+        image: product.image,
+        brand: product.brand,
+        category: product.category,
+        countInStock: product.countInStock,
+        description: product.description,
+      });
+      console.log("new stock :", product.countInStock);
+
+      //updateProduct({});
+      /*
+      e.preventDefault();
+      showLoading();
+      const product = await getProduct(request.id);
+      product.countInStock += 1;
+
+      const data = await updateProduct({
+        _id: request.id,
+        name: product.name,
+        price: product.price,
+        image: product.image,
+        brand: product.brand,
+        category: product.category,
+        countInStock: product.countInStock,
+        description: product.description,
+      });
+
+      console.log("countInStock :", product.countInStock );
+      hideLoading();
+      */
+      
+      removeFromCart(deleteButton.id);
+        /*
+        console.log(deleteButton.id);
+        const keys = Object.keys(localStorage);
+      
+        keys.forEach((key) => {
+          const value = localStorage.getItem(key);
+          if (value === 'undefined') {
+            localStorage.removeItem(key);
+            console.log(`Anahtar "${key}" başarıyla silindi.`);
+          }
+        });
+        if (deleteButton.id === undefined) {
+          localStorage.removeItem(undefined);  
+        }*/
       });
     });
-    document.getElementById('checkout-button').addEventListener('click', () => {
-      document.location.hash = '/signin';
+    
+    document.getElementById('checkout-button').addEventListener('click', async (e) => {
+      
+      e.preventDefault();
+      showLoading();
+
+      const { name, email } = getUserInfo();
+      //console.log("name : ", name);
+      //const user = await getUser({ });
+      const user = await getUser(request.id);
+      //console.log("user : ", user.cash);
+      const cartItems = getCartItems();
+      console.log("user : ", user);
+      console.log("user : ", name);
+
+      if ( user.cash < cartItems.reduce((a, c) => a + c.price * c.qty, 0)) {
+        //showMessage("Not Enough Money");
+        console.log("Not Enough Money");
+
+      }
+
+      else {
+        user.cash -= cartItems.reduce((a, c) => a + c.price * c.qty, 0);
+        console.log(" product.price : ",  cartItems.reduce((a, c) => a + c.price * c.qty, 0));
+        
+      }
+      const data = await update({
+        _id: request.id,
+        name : user.name,
+        email : user.email,
+        password : user.password,
+        cash : user.cash,
+      });
+      console.log("New cash : ", user.cash);
+      hideLoading();
+      if (data.error) {
+        showMessage(data.error);
+      } else {
+        document.location.hash = '/signin';
+
+      }
+
+
+
+      //document.location.hash = '/signin';
     });
   },
   render: async () => {
+    /*
+    const { name, email } = getUserInfo();
+    console.log("name : ", name);
+    console.log("name : ", email);
+    */
+
     const request = parseRequestUrl();
+    /*
+    const user = await getUser(request.id);
+    console.log("user cash: ", user.cash);
+    console.log("user : ", user);
+    */
+
     if (request.id) {
       const product = await getProduct(request.id);
       addToCart({
@@ -60,6 +184,7 @@ const CartScreen = {
         countInStock: product.countInStock,
         qty: 1,
       });
+    
     }
     const cartItems = getCartItems();
     return `
@@ -104,7 +229,7 @@ const CartScreen = {
                 </div>
               </div>
               <div class="cart-price">
-                $${item.price}
+                ${item.price} TL
               </div>
             </li>
             `

@@ -18,7 +18,9 @@ const SigninScreen = {
           showMessage(data.error);
         } else {
           setUserInfo(data);
-          redirectUser();
+          //redirectUser();
+          document.location.hash = `/`;
+
         }
       });
   },
@@ -31,7 +33,7 @@ const SigninScreen = {
       <form id="signin-form">
         <ul class="form-items">
           <li>
-            <h1>Sign-In</h1>
+            <h1>Log-in</h1>
           </li>
           <li>
             <label for="email">Email</label>
@@ -42,7 +44,7 @@ const SigninScreen = {
             <input type="password" name="password" id="password" />
           </li>
           <li>
-            <button type="submit" class="primary">Signin</button>
+            <button type="submit" class="primary">Login</button>
           </li>
           <li>
             <div>

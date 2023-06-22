@@ -24,6 +24,149 @@ export const getProducts = async ({ searchKeyword = "" }) => {
   }
 };
 
+// Support
+
+/*
+export const getSupports = async (id) => {
+  try {
+    const response = await axios.get(`${apiUrl}/api/supports/${id}`); // GET isteği ile yeni şikayetleri alın
+    return response.data;
+  } catch (err) {
+    console.error('Şikayetleri alma hatası:', err);
+    return { error: err.response.data.message || err.message };
+  }
+};
+*/
+export const getSupports = async () => {
+  try {
+
+    const response = await axios({
+      url: `${apiUrl}/api/supports`,
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    // if (response.statusText !== 'OK') {
+    //   throw new Error(response.data.message);
+    // }
+    return response.data;
+  } catch (err) {
+    console.log(err);
+    return { error: err.response.data.message || err.message };
+  }
+};
+/*
+export const getSupports = async ({ searchKeyword = "" }) => {
+  try {
+    let queryString = "?";
+    if (searchKeyword) queryString += `searchKeyword=${searchKeyword}&`;
+
+    const response = await axios({
+      url: `${apiUrl}/api/supports${queryString}`,
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    // if (response.statusText !== 'OK') {
+    //   throw new Error(response.data.message);
+    // }
+    return response.data;
+  } catch (err) {
+    console.log(err);
+    return { error: err.response.data.message || err.message };
+  }
+};
+*/
+export const createSupport = async (review) => {
+  try {
+    const { token } = getUserInfo();
+    const response = await axios({
+      url: `${apiUrl}/api/supports`,
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      data: review,
+    });
+    return response.data;
+  } catch (err) {
+    return { error: err.response.data.message || err.message };
+  }
+};
+/*
+export const createSupport = async (supportId, review) => {
+  try {
+    const { token } = getUserInfo();
+    const response = await axios({
+      url: `${apiUrl}/api/supports/${supportId}`,
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      data: review,
+    });
+    return response.data;
+  } catch (err) {
+    return { error: err.response.data.message || err.message };
+  }
+};
+*/
+export const getSupport= async (id) => {
+  try {
+    const response = await axios({
+      url: `${apiUrl}/api/supports/${id}`,
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    // if (response.statusText !== 'OK') {
+    //   throw new Error(response.data.message);
+    // }
+    return response.data;
+  } catch (err) {
+    console.log(err);
+    return { error: err.response.data.message || err.message };
+  }
+};
+/*
+export const createSupport = async (supportId, comment, name) => {
+  try {
+    const response = await axios.post(`/api/supports/${supportId}`, { comment, name }); // POST isteği ile şikayeti gönderin
+    return response.data;
+  } catch (err) {
+    console.error('Şikayet oluşturma hatası:', err);
+    return { error: err.response.data.message || err.message };
+  }
+};
+*/
+/*
+export const createSupport = async (review) => {
+  try {
+    //const { token } = getUserInfo();
+    const response = await axios({
+      url: `${apiUrl}/api/customer-messages`,
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        //Authorization: `Bearer ${token}`,
+      },
+      data: review,
+    });
+    // if (response.statusText !== "Created") {
+    //   throw new Error(response.data.message);
+    // }
+    return response.data;
+  } catch (err) {
+    return { error: err.response.data.message || err.message };
+  }
+};
+*/
+
 export const getProduct = async (id) => {
   try {
     const response = await axios({
@@ -42,6 +185,49 @@ export const getProduct = async (id) => {
     return { error: err.response.data.message || err.message };
   }
 };
+/*
+export const getUser = async ({ searchKeyword = "" }) => {
+  try {
+    let queryString = "?";
+    if (searchKeyword) queryString += `searchKeyword=${searchKeyword}&`;
+
+    const response = await axios({
+      url: `${apiUrl}/api/users${queryString}`,
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    // if (response.statusText !== 'OK') {
+    //   throw new Error(response.data.message);
+    // }
+    return response.data;
+  } catch (err) {
+    console.log(err);
+    return { error: err.response.data.message || err.message };
+  }
+};
+*/
+
+export const getUser = async (id) => {
+  try {
+    const response = await axios({
+      url: `${apiUrl}/api/users/${id}`,
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    // if (response.statusText !== 'OK') {
+    //   throw new Error(response.data.message);
+    // }
+    return response.data;
+  } catch (err) {
+    console.log(err);
+    return { error: err.response.data.message || err.message };
+  }
+};
+
 export const createProduct = async () => {
   try {
     const { token } = getUserInfo();
@@ -82,6 +268,8 @@ export const createReview = async (productId, review) => {
     return { error: err.response.data.message || err.message };
   }
 };
+
+
 
 export const deleteProduct = async (productId) => {
   try {
@@ -167,7 +355,7 @@ export const signin = async ({ email, password }) => {
     return { error: err.response.data.message || err.message };
   }
 };
-export const register = async ({ name, email, password }) => {
+export const register = async ({ name, email, password, cash }) => {
   try {
     const response = await axios({
       url: `${apiUrl}/api/users/register`,
@@ -179,6 +367,7 @@ export const register = async ({ name, email, password }) => {
         name,
         email,
         password,
+        cash,
       },
     });
     // if (response.statusText !== 'OK') {
@@ -190,7 +379,7 @@ export const register = async ({ name, email, password }) => {
     return { error: err.response.data.message || err.message };
   }
 };
-export const update = async ({ name, email, password }) => {
+export const update = async ({ name, email, password, cash }) => {
   try {
     const { _id, token } = getUserInfo();
     const response = await axios({
@@ -204,6 +393,7 @@ export const update = async ({ name, email, password }) => {
         name,
         email,
         password,
+        cash
       },
     });
     // if (response.statusText !== 'OK') {
@@ -258,13 +448,13 @@ export const getOrders = async () => {
 };
 export const deleteOrder = async (orderId) => {
   try {
-    const { token } = getUserInfo();
+    //const { token } = getUserInfo();
     const response = await axios({
       url: `${apiUrl}/api/orders/${orderId}`,
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
+        //Authorization: `Bearer ${token}`,
       },
     });
     // if (response.statusText !== 'OK') {
@@ -275,6 +465,8 @@ export const deleteOrder = async (orderId) => {
     return { error: err.response.data.message || err.message };
   }
 };
+
+
 export const getOrder = async (id) => {
   try {
     const { token } = getUserInfo();

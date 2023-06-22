@@ -68,7 +68,11 @@ const DashboardScreen = {
             <h2>Categories</h2>
             <div class="ct-perfect-fourth ct-chart-pie"></div>
           </div>
-        </div>          
+        </div>  
+        <!-- Customer message -->
+        <div>
+        <h2>Customer Messages</h2>
+      </div>        
       </div>
     </div>
     `;

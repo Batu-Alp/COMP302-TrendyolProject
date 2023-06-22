@@ -1,3 +1,5 @@
+/* eslint-disable no-use-before-define */
+
 import {
   parseRequestUrl,
   showLoading,
@@ -5,15 +7,92 @@ import {
   showMessage,
   rerender,
 } from '../utils';
-import { createReview, getProduct } from '../api';
+import { createReview, getProduct, updateProduct } from '../api';
 import Rating from '../components/Rating';
 import { getUserInfo } from '../localStorage';
+/*
+const decreaseCountInStock = async (productId) => {
+  const product = await getProduct(productId);
+  if (product.countInStock > 0) {
+    product.countInStock -= 1;
+    // Burada güncellenen ürünü kaydetmek veya API'ye göndermek gerekebilir
+    rerender(ProductScreen);
+  }
+};
+*/
+const decreaseCountInStock = async (productId) => {
+  showLoading();
+  const product = await getProduct(productId);
+  if (product.countInStock > 0) {
+    product.countInStock -= 1;
+    await updateProduct(product);
+    hideLoading();
+    showMessage('Product count updated');
+    rerender(ProductScreen);
+  } else {
+    hideLoading();
+    showMessage('Product is out of stock');
+  }
+};
+
 
 const ProductScreen = {
   after_render: () => {
     const request = parseRequestUrl();
-    document.getElementById('add-button').addEventListener('click', () => {
-      document.location.hash = `/cart/${request.id}`;
+
+  
+    document.getElementById('add-button').addEventListener('click', async (e) => {
+      //decreaseCountInStock(request.id);
+      e.preventDefault();
+      showLoading();
+      const product = await getProduct(request.id);
+    
+      if (product.countInStock === 0){
+        console.log("Not in Stock");
+        alert("Not in Stock");
+
+      }
+
+      else {
+
+        product.countInStock-= 1;
+        console.log("product :", product);
+        console.log("product.countInStock :", product.countInStock);
+
+      }
+  
+      /*
+      const data = await updateProduct({
+        _id : request.id,
+        countInStock: product.countInStock,
+      });
+      */
+      const data = await updateProduct({
+        _id: request.id,
+        name: product.name,
+        price: product.price,
+        image: product.image,
+        brand: product.brand,
+        category: product.category,
+        countInStock: product.countInStock,
+        description: product.description,
+      });
+
+      console.log("countInStock :", data);
+      
+      hideLoading();
+      if (data.error) {
+        showMessage(data.error);
+      } else {
+        document.location.hash = `/cart/${request.id}`;
+
+      }
+      
+      //const product = await getProduct(request.id);
+
+      //document.location.hash = `/cart/${request.id}`;
+      //decreaseCountInStock(request.id);
+
     });
     document.getElementById('add-wishlist').addEventListener('click', () => {
       document.location.hash = `/wishlist/${request.id}`;
@@ -29,7 +108,9 @@ const ProductScreen = {
             comment: document.getElementById('comment').value,
             rating: document.getElementById('rating').value,
           });
+       
           hideLoading();
+
           if (data.error) {
             showMessage(data.error);
           } else {
@@ -39,6 +120,12 @@ const ProductScreen = {
           }
         });
     }
+
+
+    //console.log("after render : ", request.id);
+
+    // Customer Support
+    
   },
   render: async () => {
     const request = parseRequestUrl();
@@ -49,6 +136,8 @@ const ProductScreen = {
     }
     hideLoading();
     const userInfo = getUserInfo();
+
+
     return `
     <div class="content">
       <div class="back-to-result">
@@ -69,12 +158,13 @@ const ProductScreen = {
 
       <div class="details">
         <div class="details-image">
-          <img src="${product.image}" alt="${product.name}" />
+          <img src="${product.image}" alt="${product.name}" id = "image" value = "${product.name}"/>
         </div>
         <div class="details-info">
           <ul>
             <li>
-              <h1>${product.name}</h1>
+              <h1 id="name" value = "${product.name}">${product.name}</h1>
+
             </li>
             <li>
             ${Rating.render({
@@ -82,12 +172,12 @@ const ProductScreen = {
               text: `${product.numReviews} reviews`,
             })}
             </li>
-            <li>
+            <li id = "price" value = "${product.price}">
               Price: <strong>$${product.price}</strong>
             </li>
             <li>
               Description:
-              <div>
+              <div id = "description" value = "${product.description}">
                 ${product.description}
               </div>
             </li>
@@ -103,7 +193,7 @@ const ProductScreen = {
                 Status : 
                   ${
                     product.countInStock > 0
-                      ? `<span class="success">In Stock</span>`
+                      ? `<span class="success" id = "countInStock" value = "${product.countInStock}">${product.countInStock}</span>`
                       : `<span class="error">Unavailable</span>`
                   }
               </li>

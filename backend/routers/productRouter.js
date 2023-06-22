@@ -1,6 +1,6 @@
 import express from 'express';
 import expressAsyncHandler from 'express-async-handler';
-import { isAuth, isAdmin } from '../utils';
+import { isAuth, isAdmin, isSeller} from '../utils';
 import Product from '../models/productModel';
 
 const productRouter = express.Router();
@@ -30,7 +30,33 @@ productRouter.get(
 productRouter.post(
   '/',
   isAuth,
+  expressAsyncHandler(async (req, res) => {
+    if (req.user.isAdmin || req.user.isSeller) {
+      const product = new Product({
+        name: 'sample product',
+        description: 'sample desc',
+        category: 'sample category',
+        brand: 'sample brand',
+        image: '/images/product-1.jpg',
+      });
+      const createdProduct = await product.save();
+      if (createdProduct) {
+        res.status(201).send({ message: 'Product Created', product: createdProduct });
+      } else {
+        res.status(500).send({ message: 'Error in creating product' });
+      }
+    } else {
+      res.status(403).send({ message: 'Unauthorized to create product' });
+    }
+  })
+);
+
+/*
+productRouter.post(
+  '/',
+  isAuth,
   isAdmin,
+  isSeller,
   expressAsyncHandler(async (req, res) => {
     const product = new Product({
       name: 'sample product',
@@ -49,10 +75,44 @@ productRouter.post(
     }
   })
 );
+*/
+productRouter.put(
+  '/:id',
+  isAuth,
+  expressAsyncHandler(async (req, res) => {
+   //if (req.user.isAdmin || req.user.isSeller ) {
+      const productId = req.params.id;
+      const product = await Product.findById(productId);
+      if (product) {
+        product.name = req.body.name;
+        product.price = req.body.price;
+        product.image = req.body.image;
+        product.brand = req.body.brand;
+        product.category = req.body.category;
+        product.countInStock = req.body.countInStock;
+        product.description = req.body.description;
+        const updatedProduct = await product.save();
+        if (updatedProduct) {
+          res.send({ message: 'Product Updated', product: updatedProduct });
+        } else {
+          res.status(500).send({ message: 'Error in updating product' });
+        }
+      } else {
+        res.status(404).send({ message: 'Product Not Found' });
+      }
+    //} 
+    /*else {
+      res.status(403).send({ message: 'Unauthorized to update product' });
+    }*/
+  })
+);
+
+/*
 productRouter.put(
   '/:id',
   isAuth,
   isAdmin,
+  isSeller,
   expressAsyncHandler(async (req, res) => {
     const productId = req.params.id;
     const product = await Product.findById(productId);
@@ -75,10 +135,33 @@ productRouter.put(
     }
   })
 );
+
+*/
+
+productRouter.delete(
+  '/:id',
+  isAuth,
+  expressAsyncHandler(async (req, res) => {
+    if (req.user.isAdmin || req.user.isSeller) {
+      const product = await Product.findById(req.params.id);
+      if (product) {
+        const deletedProduct = await product.remove();
+        res.send({ message: 'Product Deleted', product: deletedProduct });
+      } else {
+        res.status(404).send({ message: 'Product Not Found' });
+      }
+    } else {
+      res.status(403).send({ message: 'Unauthorized to delete product' });
+    }
+  })
+);
+
+/*
 productRouter.delete(
   '/:id',
   isAuth,
   isAdmin,
+  isSeller,
   expressAsyncHandler(async (req, res) => {
     const product = await Product.findById(req.params.id);
     if (product) {
@@ -89,7 +172,7 @@ productRouter.delete(
     }
   })
 );
-
+*/
 productRouter.post(
   '/:id/reviews',
   isAuth,

@@ -1,9 +1,27 @@
-import { update, getMyOrders } from '../api';
+import { update, getMyOrders, deleteOrder} from '../api';
 import { getUserInfo, setUserInfo, clearUser } from '../localStorage';
-import { showLoading, hideLoading, showMessage } from '../utils';
+import { showLoading, hideLoading, showMessage, rerender} from '../utils';
 
 const ProfileScreen = {
   after_render: () => {
+    // Delete button added
+    const deleteButtons = document.getElementsByClassName('delete-button');
+    Array.from(deleteButtons).forEach((deleteButton) => {
+      deleteButton.addEventListener('click', async () => {
+        if (confirm('Are you sure to delete this order?')) {
+          showLoading();
+          const data = await deleteOrder(deleteButton.id);
+          /*if (data.error) {
+            showMessage(data.error);
+          } else {
+            rerender(ProfileScreen);
+          }*/
+          rerender(ProfileScreen);
+
+          hideLoading();
+        }
+      });
+    });
     document.getElementById('signout-button').addEventListener('click', () => {
       clearUser();
       document.location.hash = '/';
@@ -58,7 +76,7 @@ const ProfileScreen = {
             <button type="submit" class="primary">Update</button>
           </li>
           <li>
-          <button type="button" id="signout-button" >Sign Out</button>
+          <button type="button" id="signout-button" >Log Out</button>
         </li>        
         </ul>
       </form>
@@ -91,6 +109,10 @@ const ProfileScreen = {
             <td>${order.paidAt || 'No'}</td>
             <td>${order.deliveryAt || 'No'}</td>
             <td><a href="/#/order/${order._id}">DETIALS</a> </td>
+            <!-- Delete -->
+            <td>
+            <button id="${order._id}" class="delete-button">Delete</button>
+            </td>
           </tr>
           `
                     )
